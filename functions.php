@@ -81,4 +81,11 @@
         $host = $_SERVER['HTTP_HOST'];
         return $protocol . $host . '/'; // Ensure it points to the root
     }
+
+    function checkUserSessionIsActive() {
+        if (isset($_SESSION['email']) && !empty($_SESSION['email'])) {
+            header("Location: admin/dashboard.php");
+            exit;
+        }
+    }
 ?>
