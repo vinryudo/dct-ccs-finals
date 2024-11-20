@@ -1,3 +1,11 @@
+<?php
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+
+    $title = isset($title) ? $title : "Default Title";
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
