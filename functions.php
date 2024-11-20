@@ -1,4 +1,8 @@
-<?php    
+<?php
+    if (session_status() === PHP_SESSION_NONE) {
+        session_start();
+    }
+
     function validateLoginCredentials($email, $password) {
         $errors = [];
         if (empty($email)) {
@@ -30,5 +34,51 @@
         $html .= '</div>';
     
         return $html;
+    }
+
+    function db_connect() {
+        $host = 'localhost';
+        $user = 'root';
+        $password = '';
+        $database = 'dct-ccs-finals';
+    
+        $connection = new mysqli($host, $user, $password, $database);
+    
+        if ($connection->connect_error) {
+            die("Connection failed: " . $connection->connect_error);
+        }
+    
+        return $connection;
+    }
+
+    function authenticate_user($email, $password) {
+        $connection = db_connect();
+        $password_hash = md5($password); // MD5 hash for password
+    
+        $query = "SELECT * FROM users WHERE email = ? AND password = ?";
+        $stmt = $connection->prepare($query);
+        $stmt->bind_param('ss', $email, $password_hash);
+        $stmt->execute();
+        $result = $stmt->get_result();
+    
+        if ($result->num_rows > 0) {
+            return $result->fetch_assoc(); // Return user data
+        }
+    
+        return false; // Login failed
+    }
+
+    function login_user($user) {
+        $_SESSION['user_id'] = $user['id'];
+        $_SESSION['name'] = $user['name'];
+        $_SESSION['email'] = $user['email'];
+    }
+
+    function getBaseURL() {
+        // Check if HTTPS is enabled
+        $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
+        // Build the base URL using host and server name
+        $host = $_SERVER['HTTP_HOST'];
+        return $protocol . $host . '/'; // Ensure it points to the root
     }
 ?>
