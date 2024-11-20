@@ -14,6 +14,7 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link d-flex align-items-center gap-2" href="#">
+                    <i class="fa-solid fa-book-open me-2 fa-fw"></i>
                         Subjects
                     </a>
                 </li>
