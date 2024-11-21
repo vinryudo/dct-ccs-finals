@@ -53,7 +53,7 @@
 
     function authenticate_user($email, $password) {
         $connection = db_connect();
-        $password_hash = md5($password); // MD5 hash for password
+        $password_hash = md5($password);
     
         $query = "SELECT * FROM users WHERE email = ? AND password = ?";
         $stmt = $connection->prepare($query);
@@ -96,5 +96,57 @@
         session_destroy(); // Destroy the session
         header("Location:../index.php"); // Redirect to root login page
         exit();
+    }
+
+    function validateSubjectData($subject_data) {
+        $errors = [];
+    
+        // Check if subject code is provided and has a valid length
+        if (empty($subject_data['subject_code'])) {
+            $errors[] = "Subject code is required.";
+        } elseif (strlen($subject_data['subject_code']) > 4) { // Limiting subject code length to 4 characters
+            $errors[] = "Subject code cannot be longer than 4 characters.";
+        }
+    
+        // Check if subject name is provided and is not too long
+        if (empty($subject_data['subject_name'])) {
+            $errors[] = "Subject name is required.";
+        } elseif (strlen($subject_data['subject_name']) > 100) { // Limiting subject name length to 100 characters
+            $errors[] = "Subject name cannot be longer than 100 characters.";
+        }
+    
+        return $errors; // Return the list of errors
+    }
+    
+    // Function to check for duplicate subject data in the database
+    function checkDuplicateSubjectData($subject_data) {
+        $connection = db_connect();
+        $query = "SELECT * FROM subjects WHERE subject_code = ?";
+        $stmt = $connection->prepare($query);
+        $stmt->bind_param('s', $subject_data['subject_code']);
+        $stmt->execute();
+        $result = $stmt->get_result();
+    
+        if ($result->num_rows > 0) {
+            return "Subject code already exists. Please choose another."; // Return the error message for duplicates
+        }
+    
+        return ''; // No duplicate found
+    }
+    
+    // Function to check for duplicate subject name in the database
+    function checkDuplicateSubjectName($subject_name) {
+        $connection = db_connect();
+        $query = "SELECT * FROM subjects WHERE subject_name = ?";
+        $stmt = $connection->prepare($query);
+        $stmt->bind_param('s', $subject_name);
+        $stmt->execute();
+        $result = $stmt->get_result();
+    
+        if ($result->num_rows > 0) {
+            return "Subject name already exists. Please choose another."; // Return the error message for duplicates
+        }
+    
+        return ''; // No duplicate found
     }
 ?>
