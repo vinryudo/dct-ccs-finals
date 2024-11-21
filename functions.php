@@ -101,14 +101,14 @@
     
         if (empty($subject_data['subject_code'])) {
             $errors[] = "Subject code is required.";
-        } elseif (strlen($subject_data['subject_code']) > 4) {
-            $errors[] = "Subject code cannot be longer than 4 characters.";
+        } elseif (strlen($subject_data['subject_code']) > 3) {
+            $errors[] = "Subject code cannot be longer than 3 characters.";
         }
     
         if (empty($subject_data['subject_name'])) {
             $errors[] = "Subject name is required.";
-        } elseif (strlen($subject_data['subject_name']) > 100) {
-            $errors[] = "Subject name cannot be longer than 100 characters.";
+        } elseif (strlen($subject_data['subject_name']) > 55) {
+            $errors[] = "Subject name cannot be longer than 55 characters.";
         }
     
         return $errors;
@@ -124,21 +124,6 @@
     
         if ($result->num_rows > 0) {
             return "Subject code already exists. Please input another code.";
-        }
-    
-        return '';
-    }
-    
-    function checkDuplicateSubjectName($subject_name) {
-        $connection = db_connect();
-        $query = "SELECT * FROM subjects WHERE subject_name = ?";
-        $stmt = $connection->prepare($query);
-        $stmt->bind_param('s', $subject_name);
-        $stmt->execute();
-        $result = $stmt->get_result();
-    
-        if ($result->num_rows > 0) {
-            return "Subject name already exists. Please input another.";
         }
     
         return '';
