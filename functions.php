@@ -146,9 +146,8 @@
 
     function guard() {
         if (!isset($_SESSION['email']) || empty($_SESSION['email'])) {
-            // Use the base URL to redirect
             $baseURL = getBaseURL();
-            header("Location: " . $baseURL); // Redirect to the base URL
+            header("Location: " . $baseURL);
             exit();
         }
     }
