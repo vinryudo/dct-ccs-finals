@@ -1,6 +1,9 @@
 <?php
     $title = "Edit Subject";
 
+    ob_start();
+
+
     require_once '../../functions.php';
     require_once '../partials/header.php';
     require_once '../partials/side-bar.php';
