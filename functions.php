@@ -123,7 +123,7 @@
         $result = $stmt->get_result();
     
         if ($result->num_rows > 0) {
-            return "Subject code already exists. Please choose another.";
+            return "Subject code already exists. Please input another code.";
         }
     
         return '';
@@ -138,7 +138,7 @@
         $result = $stmt->get_result();
     
         if ($result->num_rows > 0) {
-            return "Subject name already exists. Please choose another.";
+            return "Subject name already exists. Please input another.";
         }
     
         return '';
