@@ -62,10 +62,10 @@
         $result = $stmt->get_result();
     
         if ($result->num_rows > 0) {
-            return $result->fetch_assoc(); // Return user data
+            return $result->fetch_assoc();
         }
     
-        return false; // Login failed
+        return false;
     }
 
     function login_user($user) {
@@ -75,11 +75,9 @@
     }
 
     function getBaseURL() {
-        // Check if HTTPS is enabled
         $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off' || $_SERVER['SERVER_PORT'] == 443) ? "https://" : "http://";
-        // Build the base URL using host and server name
         $host = $_SERVER['HTTP_HOST'];
-        return $protocol . $host . '/'; // Ensure it points to the root
+        return $protocol . $host . '/';
     }
 
     function checkUserSessionIsActive() {
@@ -91,34 +89,31 @@
 
     function logout_user() {
         if (session_status() === PHP_SESSION_NONE) {
-            session_start(); // Start the session if not already started
+            session_start();
         }
-        session_destroy(); // Destroy the session
-        header("Location:../index.php"); // Redirect to root login page
+        session_destroy();
+        header("Location:../index.php");
         exit();
     }
 
     function validateSubjectData($subject_data) {
         $errors = [];
     
-        // Check if subject code is provided and has a valid length
         if (empty($subject_data['subject_code'])) {
             $errors[] = "Subject code is required.";
-        } elseif (strlen($subject_data['subject_code']) > 4) { // Limiting subject code length to 4 characters
+        } elseif (strlen($subject_data['subject_code']) > 4) {
             $errors[] = "Subject code cannot be longer than 4 characters.";
         }
     
-        // Check if subject name is provided and is not too long
         if (empty($subject_data['subject_name'])) {
             $errors[] = "Subject name is required.";
-        } elseif (strlen($subject_data['subject_name']) > 100) { // Limiting subject name length to 100 characters
+        } elseif (strlen($subject_data['subject_name']) > 100) {
             $errors[] = "Subject name cannot be longer than 100 characters.";
         }
     
-        return $errors; // Return the list of errors
+        return $errors;
     }
     
-    // Function to check for duplicate subject data in the database
     function checkDuplicateSubjectData($subject_data) {
         $connection = db_connect();
         $query = "SELECT * FROM subjects WHERE subject_code = ?";
@@ -128,13 +123,12 @@
         $result = $stmt->get_result();
     
         if ($result->num_rows > 0) {
-            return "Subject code already exists. Please choose another."; // Return the error message for duplicates
+            return "Subject code already exists. Please choose another.";
         }
     
-        return ''; // No duplicate found
+        return '';
     }
     
-    // Function to check for duplicate subject name in the database
     function checkDuplicateSubjectName($subject_name) {
         $connection = db_connect();
         $query = "SELECT * FROM subjects WHERE subject_name = ?";
@@ -144,9 +138,17 @@
         $result = $stmt->get_result();
     
         if ($result->num_rows > 0) {
-            return "Subject name already exists. Please choose another."; // Return the error message for duplicates
+            return "Subject name already exists. Please choose another.";
         }
     
-        return ''; // No duplicate found
+        return '';
+    }
+
+    function guard() {
+        if (!isset($_SESSION['email']) || empty($_SESSION['email'])) {
+            $baseURL = getBaseURL();
+            header("Location: " . $baseURL);
+            exit();
+        }
     }
 ?>
