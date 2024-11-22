@@ -101,14 +101,14 @@
     
         if (empty($subject_data['subject_code'])) {
             $errors[] = "Subject code is required.";
-        } elseif (strlen($subject_data['subject_code']) > 4) {
-            $errors[] = "Subject code cannot be longer than 4 characters.";
+        } elseif (strlen($subject_data['subject_code']) > 3) {
+            $errors[] = "Subject code cannot be longer than 3 characters.";
         }
     
         if (empty($subject_data['subject_name'])) {
             $errors[] = "Subject name is required.";
-        } elseif (strlen($subject_data['subject_name']) > 100) {
-            $errors[] = "Subject name cannot be longer than 100 characters.";
+        } elseif (strlen($subject_data['subject_name']) > 55) {
+            $errors[] = "Subject name cannot be longer than 55 characters.";
         }
     
         return $errors;
@@ -128,21 +128,6 @@
     
         return '';
     }
-    
-    function checkDuplicateSubjectName($subject_name) {
-        $connection = db_connect();
-        $query = "SELECT * FROM subjects WHERE subject_name = ?";
-        $stmt = $connection->prepare($query);
-        $stmt->bind_param('s', $subject_name);
-        $stmt->execute();
-        $result = $stmt->get_result();
-    
-        if ($result->num_rows > 0) {
-            return "Subject name already exists. Please input another.";
-        }
-    
-        return '';
-    }
 
     function guard() {
         if (!isset($_SESSION['email']) || empty($_SESSION['email'])) {
@@ -150,5 +135,49 @@
             header("Location: " . $baseURL);
             exit();
         }
+    }
+
+    function validateStudentData($student_data) {
+        $errors = [];
+        if (empty($student_data['student_id'])) {
+            $errors[] = "Student ID is required.";
+        }
+        if (empty($student_data['first_name'])) {
+            $errors[] = "First Name is required.";
+        }
+        if (empty($student_data['last_name'])) {
+            $errors[] = "Last Name is required.";
+        }
+    
+        return $errors;
+    }
+    
+    function checkDuplicateStudentData($student_data) {
+        $connection = db_connect();
+        $query = "SELECT * FROM students WHERE student_id = ?";
+        $stmt = $connection->prepare($query);
+        $stmt->bind_param('s', $student_data['student_id']);
+        $stmt->execute();
+        $result = $stmt->get_result();
+    
+        if ($result->num_rows > 0) {
+            return "Student ID already exists.";
+        }
+    
+        return '';
+    }
+    
+    
+    function generateUniqueIdForStudents() {
+        $connection = db_connect();
+    
+        $query = "SELECT MAX(id) AS max_id FROM students";
+        $result = $connection->query($query);
+        $row = $result->fetch_assoc();
+        $max_id = $row['max_id'];
+    
+        $connection->close();
+    
+        return $max_id + 1;
     }
 ?>
