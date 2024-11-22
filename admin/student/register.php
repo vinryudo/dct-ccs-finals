@@ -2,13 +2,14 @@
     $title = "Register a New Student";
     require_once '../partials/header.php';
     require_once '../partials/side-bar.php';
+    require_once '../../functions.php';
 
     $error_message = '';
     $success_message = '';
 
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $student_data = [
-            'student_id' => generateValidStudentId(trim($_POST['student_id'] ?? '')), // Ensure it's 4 characters
+            'student_id' => generateValidStudentId(trim($_POST['student_id'] ?? '')),
             'first_name' => trim($_POST['first_name'] ?? ''),
             'last_name' => trim($_POST['last_name'] ?? '')
         ];
