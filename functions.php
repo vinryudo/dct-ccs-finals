@@ -180,4 +180,9 @@
     
         return $max_id + 1;
     }
+
+    function generateValidStudentId($original_id) {
+        // Truncate to the first 4 characters
+        return substr($original_id, 0, 4);
+    }
 ?>
