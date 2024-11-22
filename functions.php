@@ -129,14 +129,6 @@
         return '';
     }
 
-    function guard() {
-        if (!isset($_SESSION['email']) || empty($_SESSION['email'])) {
-            $baseURL = getBaseURL();
-            header("Location: " . $baseURL);
-            exit();
-        }
-    }
-
     function validateStudentData($student_data) {
         $errors = [];
         if (empty($student_data['student_id'])) {
