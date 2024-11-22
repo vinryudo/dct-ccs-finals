@@ -1,5 +1,6 @@
 <?php 
     $title = "Dashboard"; 
+
     require_once '../admin/partials/header.php'; 
     require_once '../admin/partials/side-bar.php';
     require_once '../functions.php';
@@ -18,6 +19,40 @@
     $student_count = 0;
     if ($student_result && $row = $student_result->fetch_assoc()) {
         $student_count = $row['student_count'];
+    }
+
+    $failed_students_query = "
+    SELECT COUNT(*) AS failed_students
+    FROM (
+        SELECT 
+            students.id AS student_id,
+            AVG(students_subjects.grade) AS average_grade
+        FROM students
+        LEFT JOIN students_subjects ON students.id = students_subjects.student_id
+        GROUP BY students.id
+        HAVING average_grade < 75
+    ) AS failed";
+    $failed_students = 0;
+    $failed_students_result = $connection->query($failed_students_query);
+    if ($failed_students_result && $row = $failed_students_result->fetch_assoc()) {
+        $failed_students = $row['failed_students'];
+    }
+
+    $passed_students_query = "
+    SELECT COUNT(*) AS passed_students
+    FROM (
+        SELECT 
+            students.id AS student_id,
+            AVG(students_subjects.grade) AS average_grade
+        FROM students
+        LEFT JOIN students_subjects ON students.id = students_subjects.student_id
+        GROUP BY students.id
+        HAVING average_grade >= 75
+    ) AS passed";
+    $passed_students = 0;
+    $passed_students_result = $connection->query($passed_students_query);
+    if ($passed_students_result && $row = $passed_students_result->fetch_assoc()) {
+        $passed_students = $row['passed_students'];
     }
 ?>
 
@@ -46,7 +81,7 @@
             <div class="card border-danger mb-3">
                 <div class="card-header bg-danger text-white border-danger">Number of Failed Students:</div>
                 <div class="card-body text-danger">
-                    <h5 class="card-title">0</h5>
+                    <h5 class="card-title"><?php echo htmlspecialchars($failed_students);?></h5>
                 </div>
             </div>
         </div>
@@ -54,7 +89,7 @@
             <div class="card border-success mb-3">
                 <div class="card-header bg-success text-white border-success">Number of Passed Students:</div>
                 <div class="card-body text-success">
-                    <h5 class="card-title">0</h5>
+                    <h5 class="card-title"><?php echo htmlspecialchars($passed_students);?></h5>
                 </div>
             </div>
         </div>
