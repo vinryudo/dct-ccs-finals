@@ -32,9 +32,10 @@
                 $query = "UPDATE students SET first_name = ?, last_name = ? WHERE id = ?";
                 $stmt = $connection->prepare($query);
                 $stmt->bind_param('ssi', $updated_data['first_name'], $updated_data['last_name'], $student_id);
-    
+                
                 if ($stmt->execute()) {
                     $success_message = "Student record successfully updated.";
+                    header("Location: ../student/register.php");
                     exit();
                 } else {
                     $error_message = "Failed to update student record. Error: " . $stmt->error;
