@@ -185,4 +185,19 @@
         // Truncate to the first 4 characters
         return substr($original_id, 0, 4);
     }
+
+    function getSelectedStudentData($student_id) {
+        $connection = db_connect();
+        $query = "SELECT * FROM students WHERE id = ?";
+        $stmt = $connection->prepare($query);
+        $stmt->bind_param('i', $student_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $student = $result->fetch_assoc();
+    
+        $stmt->close();
+        $connection->close();
+    
+        return $student;
+    }
 ?>
